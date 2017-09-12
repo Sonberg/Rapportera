@@ -1,4 +1,7 @@
 import React from 'react';
+import moment from 'moment';
+
+import { StatusBar } from 'react-native';
 import { Screen, View, Divider } from '@shoutem/ui';
 import { graphql, gql, compose } from 'react-apollo';
 import Navigation from './components/navigation';
@@ -18,21 +21,31 @@ const createRapportMutation = gql`
 
 
 class Index extends React.Component {
-  
+
 
   createNew = (start, end) => {
-    
+    if (!start) {
+      start = moment();
+    }
+    if (!end) {
+      end = moment();
+    }
+
     let params = { start: start.format(), end: end.format() };
-    
+
     this.props.mutate({mutation: 'createRapport', variables: params })
     .then(rapport => this.showRapport(Object.assign({}, { comment: "" }, rapport)));
   };
-  
-  showRapport = (rapport) => this.props.navigation.navigate('rapport', { rapport  });
-   
+
+  showRapport = (rapport) => this.props.navigation.navigate('rapport', { rapport });
+
   render() {
     return (
       <Screen styleName={'paper'}>
+        <StatusBar
+           backgroundColor="blue"
+           barStyle="light-content"
+         />
         <Navigation {...this.props} createNew={this.createNew}/>
         <TrackList {...this.props}/>
         <Divider styleName="line" />

@@ -1,7 +1,5 @@
 import React from 'react';
 import moment from 'moment';
-import AutogrowInput from 'react-native-autogrow-input';
-import DateTimePicker from 'react-native-datetime';
 
 import { Screen, Divider, View, Tile,Text, Title, Heading, TouchableOpacity, Button, Icon, Subtitle, Caption, Row, TextInput } from '@shoutem/ui';
 import { StyleSheet, ScrollView } from 'react-native';
@@ -20,47 +18,47 @@ const query = gql`query {
 }`
 
 class Edit extends React.PureComponent {
-  
-  
+
+
   static defaultProps = {
     onChange: () => null
   }
-  
-  
+
+
   constructor(props) {
     super(props)
     this.state = {
       rapport: props.rapport,
     }
   }
-  
+
   componentWillReceiveProps(nextProps) {
     if (!nextProps.rapport) {
       return;
     }
-    
+
     this.setState({ rapport: nextProps.rapport });
   }
-  
-  
+
+
   update(state) {
     this.props.onChange(state.rapport);
     this.setState(state);
   }
-  
+
   projects = () => {
     var obj = {};
     this.props.data.allProjects.forEach((p) => obj[p.id] = p.name);
     return t.enums(obj || {}, "Projects");
   }
-  
-  model = () => t.struct({   
-    project: this.projects(),
-    start: t.Date,               
+
+  model = () => t.struct({
+    start: t.Date,
     end: t.Date,
-    comment: t.maybe(t.String),         
+    project: this.projects(),
+    comment: t.maybe(t.String),
   });
-  
+
   formatRapport = (rapport) => {
     return {
       comment: rapport.comment,
@@ -69,18 +67,18 @@ class Edit extends React.PureComponent {
       project: rapport.project ? rapport.project.id : null
     }
   }
-  
+
   options = () => {
     return {
       fields: {
         start: {
           config: {
-            format: (date) => moment(date).format('DD/MM/YYYY HH:mm'), 
+            format: (date) => moment(date).format('DD/MM/YYYY HH:mm'),
           }
         },
         end: {
           config: {
-            format: (date) => moment(date).format('DD/MM/YYYY HH:mm'), 
+            format: (date) => moment(date).format('DD/MM/YYYY HH:mm'),
           }
         }
       }
@@ -89,20 +87,20 @@ class Edit extends React.PureComponent {
 
 
   render() {
-    
+
     const { rapport } = this.state;
-  
-    return (        
+
+    return (
       <ScrollView style={{padding: 16}}>
-      
-        
+
+
         <form.Form
           ref="form"
           type={this.model()}
           value={this.formatRapport(rapport)}
           options={this.options()}
         />
-          
+
       </ScrollView>
     );
   }
@@ -136,18 +134,18 @@ setStart = (date) => {
     let state = { rapport: {...this.state.rapport, start: time }};
     this.update(state);
   }
-  
+
 }
 
-setEnd = (date) => { 
+setEnd = (date) => {
   let time = moment(date, DATE_FORMAT);
-  if (date && date.length === 16 && time.isValid()) { 
+  if (date && date.length === 16 && time.isValid()) {
     let state = {rapport: {...this.state.rapport, end: time }};
     this.update(state);
   }
 }
 
-setComment = (text) => { 
+setComment = (text) => {
   let state = {rapport: {...this.state.rapport, comment: text }};
   this.update(state);
 }
